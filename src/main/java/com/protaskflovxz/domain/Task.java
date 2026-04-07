@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * A Task.
@@ -44,9 +45,10 @@ public class Task implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     private Project project;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "assigned_to_id", nullable = false)
+    @JsonIgnoreProperties(value = { "tasks" }, allowSetters = true)
+    private User assignedTo;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -141,17 +143,17 @@ public class Task implements Serializable {
         return this;
     }
 
-    public User getUser() {
-        return this.user;
+    public User getAssignedTo() {
+        return this.assignedTo;
     }
 
-    public Task user(User user) {
-        this.setUser(user);
+    public void setAssignedTo(User user) {
+        this.assignedTo = user;
+    }
+
+    public Task assignedTo(User user) {
+        this.setAssignedTo(user);
         return this;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
