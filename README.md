@@ -1,2 +1,2 @@
-git clone https://github.com/your-org/protaskflovxz.git # Replace with actual repository URL
+git clone https://github.com/votre-utilisateur/protaskflovxz.git
     cd protaskflovxz
