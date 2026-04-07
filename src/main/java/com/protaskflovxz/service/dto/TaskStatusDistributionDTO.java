@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * A DTO for the distribution of tasks by status.
+ * A DTO for the Task status distribution.
  */
 public class TaskStatusDistributionDTO implements Serializable {
 
@@ -38,8 +38,12 @@ public class TaskStatusDistributionDTO implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         TaskStatusDistributionDTO that = (TaskStatusDistributionDTO) o;
         return Objects.equals(status, that.status) && Objects.equals(count, that.count);
     }
@@ -52,8 +56,8 @@ public class TaskStatusDistributionDTO implements Serializable {
     @Override
     public String toString() {
         return "TaskStatusDistributionDTO{" +
-               "status='" + status + '\'' +
-               ", count=" + count +
-               '}';
+            "status='" + status + '\'' +
+            ", count=" + count +
+            '}';
     }
 }
