@@ -91,33 +91,47 @@ public class TaskServiceImpl implements TaskService {
     @Transactional(readOnly = true)
     public List<TaskDTO> findAllTasksForCurrentUser() {
         LOG.debug("Request to get all Tasks for current user");
-        String currentUserLogin = SecurityUtils
+        return SecurityUtils
             .getCurrentUserLogin()
-            .orElseThrow(() -> new IllegalStateException("Current user login not found"));
-        return taskRepository.findAllByAssignedToUserLogin(currentUserLogin).stream().map(taskMapper::toDto).collect(Collectors.toList());
+            .map(login -> taskRepository.findAllByAssignedToLogin(login))
+            .map(tasks -> tasks.stream().map(taskMapper::toDto).collect(Collectors.toList()))
+            .orElse(List.of());
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<TaskStatusDistributionDTO> getTaskStatusDistributionForCurrentUser() {
-        LOG.debug("Request to get task status distribution for current user");
-        String currentUserLogin = SecurityUtils
+        LOG.debug("Request to get Task status distribution for current user");
+        return SecurityUtils
             .getCurrentUserLogin()
-            .orElseThrow(() -> new IllegalStateException("Current user login not found"));
-        return taskRepository.countTasksByStatusForUser(currentUserLogin);
+            .map(login ->
+                taskRepository
+                    .countTasksByStatusForUser(login)
+                    .stream()
+                    .map(
+                        result ->
+                            new TaskStatusDistributionDTO(
+                                Boolean.TRUE.equals(result[0]) ? "Completed" : "Pending", // Convert boolean to String
+                                (Long) result[1]
+                            )
+                    )
+                    .collect(Collectors.toList())
+            )
+            .orElse(List.of());
     }
 
     @Override
     @Transactional(readOnly = true)
     public TaskCompletionStatsDTO getTaskCompletionStatsForCurrentUser() {
-        LOG.debug("Request to get task completion statistics for current user");
-        String currentUserLogin = SecurityUtils
+        LOG.debug("Request to get Task completion statistics for current user");
+        return SecurityUtils
             .getCurrentUserLogin()
-            .orElseThrow(() -> new IllegalStateException("Current user login not found"));
-
-        Long totalTasks = taskRepository.countAllByAssignedToUserLogin(currentUserLogin);
-        Long completedTasks = taskRepository.countByAssignedToUserLoginAndCompletedIsTrue(currentUserLogin);
-
-        return new TaskCompletionStatsDTO(totalTasks, completedTasks);
+            .map(login -> {
+                long totalTasks = taskRepository.countByAssignedToLogin(login);
+                long completedTasks = taskRepository.countByAssignedToLoginAndCompleted(login, true);
+                double completionPercentage = (totalTasks > 0) ? ((double) completedTasks / totalTasks) * 100 : 0.0;
+                return new TaskCompletionStatsDTO(totalTasks, completedTasks, completionPercentage);
+            })
+            .orElse(new TaskCompletionStatsDTO(0L, 0L, 0.0));
     }
 }
