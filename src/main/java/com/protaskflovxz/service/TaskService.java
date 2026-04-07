@@ -1,7 +1,7 @@
 package com.protaskflovxz.service;
 
-import com.protaskflovxz.service.dto.TaskDTO;
 import com.protaskflovxz.service.dto.TaskCompletionStatsDTO;
+import com.protaskflovxz.service.dto.TaskDTO;
 import com.protaskflovxz.service.dto.TaskStatusDistributionDTO;
 import java.util.List;
 import java.util.Optional;
@@ -45,28 +45,6 @@ public interface TaskService {
     Page<TaskDTO> findAll(Pageable pageable);
 
     /**
-     * Get all the tasks assigned to the current user.
-     *
-     * @param pageable the pagination information.
-     * @return the list of entities.
-     */
-    Page<TaskDTO> findAllByCurrentUser(Pageable pageable);
-
-    /**
-     * Get the distribution of tasks by status for the current user.
-     *
-     * @return a list of {@link TaskStatusDistributionDTO} representing the status distribution.
-     */
-    List<TaskStatusDistributionDTO> getTaskStatusDistributionForCurrentUser();
-
-    /**
-     * Get the completion statistics for tasks assigned to the current user.
-     *
-     * @return a {@link TaskCompletionStatsDTO} with the completion statistics.
-     */
-    TaskCompletionStatsDTO getTaskCompletionStatsForCurrentUser();
-
-    /**
      * Get the "id" task.
      *
      * @param id the id of the entity.
@@ -80,4 +58,26 @@ public interface TaskService {
      * @param id the id of the entity.
      */
     void delete(Long id);
+
+    /**
+     * Get all tasks assigned to the current user.
+     *
+     * @return the list of entities.
+     */
+    List<TaskDTO> findAllTasksForCurrentUser();
+
+    /**
+     * Get task status distribution for the current user.
+     *
+     * @return the list of task status distribution DTOs.
+     */
+    List<TaskStatusDistributionDTO> getTaskStatusDistributionForCurrentUser();
+
+    /**
+     * Get task completion statistics for the current user.
+     *
+     * @return the task completion statistics DTO.
+     */
+    TaskCompletionStatsDTO getTaskCompletionStatsForCurrentUser();
+
 }
