@@ -62,7 +62,7 @@ class DashboardResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(task1.getId().intValue())))
-            .andExpect(jsonPath("$.[*].name").value(hasItem(task1.getName())));
+            .andExpect(jsonPath("$.[*].name").value(hasItem(task2.getName())));
 
         verify(taskService, times(1)).findAllTasksForCurrentUser();
     }
@@ -70,18 +70,18 @@ class DashboardResourceIT {
     @Test
     void getTaskStatusDistributionForCurrentUser() throws Exception {
         // GIVEN
-        TaskStatusDistributionDTO dist1 = new TaskStatusDistributionDTO("TODO", 5L);
-        TaskStatusDistributionDTO dist2 = new TaskStatusDistributionDTO("IN_PROGRESS", 3L);
-        List<TaskStatusDistributionDTO> distribution = Arrays.asList(dist1, dist2);
-        when(taskService.getTaskStatusDistributionForCurrentUser()).thenReturn(distribution);
+        TaskStatusDistributionDTO distribution1 = new TaskStatusDistributionDTO("NEW", 5L);
+        TaskStatusDistributionDTO distribution2 = new TaskStatusDistributionDTO("IN_PROGRESS", 3L);
+        List<TaskStatusDistributionDTO> distributions = Arrays.asList(distribution1, distribution2);
+        when(taskService.getTaskStatusDistributionForCurrentUser()).thenReturn(distributions);
 
         // WHEN & THEN
         restDashboardMockMvc
             .perform(get("/api/dashboard/task-status-distribution").accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.[*].status").value(hasItem(dist1.getStatus())))
-            .andExpect(jsonPath("$.[*].count").value(hasItem(dist1.getCount().intValue())));
+            .andExpect(jsonPath("$.[*].status").value(hasItem("NEW")))
+            .andExpect(jsonPath("$.[*].count").value(hasItem(5)));
 
         verify(taskService, times(1)).getTaskStatusDistributionForCurrentUser();
     }
@@ -89,7 +89,7 @@ class DashboardResourceIT {
     @Test
     void getTaskCompletionStatsForCurrentUser() throws Exception {
         // GIVEN
-        TaskCompletionStatsDTO stats = new TaskCompletionStatsDTO(10L, 7L, 3L);
+        TaskCompletionStatsDTO stats = new TaskCompletionStatsDTO(10L, 7L, 3L, 70.0);
         when(taskService.getTaskCompletionStatsForCurrentUser()).thenReturn(stats);
 
         // WHEN & THEN
@@ -97,9 +97,10 @@ class DashboardResourceIT {
             .perform(get("/api/dashboard/task-completion-stats").accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.totalTasks").value(stats.getTotalTasks().intValue()))
-            .andExpect(jsonPath("$.completedTasks").value(stats.getCompletedTasks().intValue()))
-            .andExpect(jsonPath("$.pendingTasks").value(stats.getPendingTasks().intValue()));
+            .andExpect(jsonPath("$.totalTasks").value(10))
+            .andExpect(jsonPath("$.completedTasks").value(7))
+            .andExpect(jsonPath("$.pendingTasks").value(3))
+            .andExpect(jsonPath("$.completionPercentage").value(70.0));
 
         verify(taskService, times(1)).getTaskCompletionStatsForCurrentUser();
     }
