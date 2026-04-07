@@ -73,27 +73,48 @@ class TaskServiceTest {
     }
 
     @Test
+    void findAllTasksForCurrentUserShouldReturnEmptyListIfNoTasks() {
+        try (MockedStatic<SecurityUtils> mockedStatic = mockStatic(SecurityUtils.class)) {
+            mockedStatic.when(SecurityUtils::getCurrentUserLogin).thenReturn(Optional.of(MOCK_LOGIN));
+
+            when(taskRepository.findAllByAssignedToLogin(MOCK_LOGIN)).thenReturn(Collections.emptyList());
+
+            List<TaskDTO> result = taskService.findAllTasksForCurrentUser();
+
+            assertThat(result).isEmpty();
+            verify(taskRepository).findAllByAssignedToLogin(MOCK_LOGIN);
+            verifyNoInteractions(taskMapper);
+        }
+    }
+
+    @Test
     void getTaskStatusDistributionForCurrentUserShouldReturnDistribution() {
         try (MockedStatic<SecurityUtils> mockedStatic = mockStatic(SecurityUtils.class)) {
             mockedStatic.when(SecurityUtils::getCurrentUserLogin).thenReturn(Optional.of(MOCK_LOGIN));
 
-            // true for completed, false for not completed
-            when(taskRepository.countTasksByStatusForUser(MOCK_LOGIN))
-                .thenReturn(Arrays.asList(new Object[] { true, 5L }, new Object[] { false, 3L }));
+            List<Object[]> mockResult = Arrays.asList(
+                new Object[]{"TODO", 5L},
+                new Object[]{"IN_PROGRESS", 3L},
+                new Object[]{"DONE", 2L}
+            );
+
+            when(taskRepository.countTasksByStatusForUser(MOCK_LOGIN)).thenReturn(mockResult);
 
             List<TaskStatusDistributionDTO> result = taskService.getTaskStatusDistributionForCurrentUser();
 
-            assertThat(result).hasSize(2);
-            assertThat(result.get(0).getStatus()).isEqualTo("Completed");
-            assertThat(result.get(0).getCount()).isEqualTo(5L);
-            assertThat(result.get(1).getStatus()).isEqualTo("Pending");
-            assertThat(result.get(1).getCount()).isEqualTo(3L);
+            assertThat(result).hasSize(3);
+            assertThat(result)
+                .containsExactlyInAnyOrder(
+                    new TaskStatusDistributionDTO("TODO", 5L),
+                    new TaskStatusDistributionDTO("IN_PROGRESS", 3L),
+                    new TaskStatusDistributionDTO("DONE", 2L)
+                );
             verify(taskRepository).countTasksByStatusForUser(MOCK_LOGIN);
         }
     }
 
     @Test
-    void getTaskStatusDistributionForCurrentUserShouldHandleEmptyResult() {
+    void getTaskStatusDistributionForCurrentUserShouldReturnEmptyListIfNoTasks() {
         try (MockedStatic<SecurityUtils> mockedStatic = mockStatic(SecurityUtils.class)) {
             mockedStatic.when(SecurityUtils::getCurrentUserLogin).thenReturn(Optional.of(MOCK_LOGIN));
 
@@ -118,15 +139,14 @@ class TaskServiceTest {
 
             assertThat(result.getTotalTasks()).isEqualTo(10L);
             assertThat(result.getCompletedTasks()).isEqualTo(7L);
-            assertThat(result.getCompletionPercentage()).isEqualTo(70.0);
-
+            assertThat(result.getPendingTasks()).isEqualTo(3L);
             verify(taskRepository).countByAssignedToLogin(MOCK_LOGIN);
             verify(taskRepository).countByAssignedToLoginAndCompleted(MOCK_LOGIN, true);
         }
     }
 
     @Test
-    void getTaskCompletionStatsForCurrentUserShouldHandleZeroTotalTasks() {
+    void getTaskCompletionStatsForCurrentUserShouldReturnZeroStatsIfNoTasks() {
         try (MockedStatic<SecurityUtils> mockedStatic = mockStatic(SecurityUtils.class)) {
             mockedStatic.when(SecurityUtils::getCurrentUserLogin).thenReturn(Optional.of(MOCK_LOGIN));
 
@@ -137,8 +157,7 @@ class TaskServiceTest {
 
             assertThat(result.getTotalTasks()).isEqualTo(0L);
             assertThat(result.getCompletedTasks()).isEqualTo(0L);
-            assertThat(result.getCompletionPercentage()).isEqualTo(0.0);
-
+            assertThat(result.getPendingTasks()).isEqualTo(0L);
             verify(taskRepository).countByAssignedToLogin(MOCK_LOGIN);
             verify(taskRepository).countByAssignedToLoginAndCompleted(MOCK_LOGIN, true);
         }
