@@ -1,7 +1,7 @@
 package com.protaskflovxz.service;
 
-import com.protaskflovxz.service.dto.TaskCompletionStatsDTO;
 import com.protaskflovxz.service.dto.TaskDTO;
+import com.protaskflovxz.service.dto.TaskCompletionStatsDTO;
 import com.protaskflovxz.service.dto.TaskStatusDistributionDTO;
 import java.util.List;
 import java.util.Optional;
@@ -60,24 +60,23 @@ public interface TaskService {
     void delete(Long id);
 
     /**
-     * Get all tasks assigned to the current user.
+     * Get all tasks assigned to the currently logged-in user.
      *
-     * @return the list of entities.
+     * @return the list of tasks.
      */
     List<TaskDTO> findAllTasksForCurrentUser();
 
     /**
-     * Get task status distribution for the current user.
+     * Get the distribution of tasks by status for the currently logged-in user.
      *
-     * @return the list of task status distribution DTOs.
+     * @return a list of TaskStatusDistributionDTO.
      */
     List<TaskStatusDistributionDTO> getTaskStatusDistributionForCurrentUser();
 
     /**
-     * Get task completion statistics for the current user.
+     * Get task completion statistics for the currently logged-in user.
      *
-     * @return the task completion statistics DTO.
+     * @return a TaskCompletionStatsDTO.
      */
     TaskCompletionStatsDTO getTaskCompletionStatsForCurrentUser();
-
 }
