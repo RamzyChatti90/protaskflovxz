@@ -3,13 +3,11 @@ package com.protaskflovxz.service.dto;
 import java.io.Serializable;
 import java.util.Objects;
 
-/**
- * A DTO for the Task status distribution.
- */
 public class TaskStatusDistributionDTO implements Serializable {
 
     private String status;
     private Long count;
+    private String createdBy;
 
     public TaskStatusDistributionDTO() {
         // Empty constructor needed for Jackson deserialization
@@ -18,6 +16,12 @@ public class TaskStatusDistributionDTO implements Serializable {
     public TaskStatusDistributionDTO(String status, Long count) {
         this.status = status;
         this.count = count;
+    }
+
+    public TaskStatusDistributionDTO(String status, Long count, String createdBy) {
+        this.status = status;
+        this.count = count;
+        this.createdBy = createdBy;
     }
 
     public String getStatus() {
@@ -36,6 +40,14 @@ public class TaskStatusDistributionDTO implements Serializable {
         this.count = count;
     }
 
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -45,12 +57,12 @@ public class TaskStatusDistributionDTO implements Serializable {
             return false;
         }
         TaskStatusDistributionDTO that = (TaskStatusDistributionDTO) o;
-        return Objects.equals(status, that.status) && Objects.equals(count, that.count);
+        return Objects.equals(status, that.status) && Objects.equals(count, that.count) && Objects.equals(createdBy, that.createdBy);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(status, count);
+        return Objects.hash(status, count, createdBy);
     }
 
     @Override
@@ -58,6 +70,7 @@ public class TaskStatusDistributionDTO implements Serializable {
         return "TaskStatusDistributionDTO{" +
                "status='" + status + '\'' +
                ", count=" + count +
+               ", createdBy='" + createdBy + '\'' +
                '}';
     }
 }
