@@ -4,22 +4,26 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * A DTO for task completion statistics.
+ * A DTO for the {@link com.protaskflovxz.domain.Task} entity representing task completion statistics.
  */
 public class TaskCompletionStatsDTO implements Serializable {
 
     private Long totalTasks;
     private Long completedTasks;
-    private Double completionPercentage;
+    private Long pendingTasks;
+    private Long overdueTasks;
+    private Double completionRate;
 
     public TaskCompletionStatsDTO() {
         // Empty constructor needed for Jackson/Spring
     }
 
-    public TaskCompletionStatsDTO(Long totalTasks, Long completedTasks, Double completionPercentage) {
+    public TaskCompletionStatsDTO(Long totalTasks, Long completedTasks, Long pendingTasks, Long overdueTasks, Double completionRate) {
         this.totalTasks = totalTasks;
         this.completedTasks = completedTasks;
-        this.completionPercentage = completionPercentage;
+        this.pendingTasks = pendingTasks;
+        this.overdueTasks = overdueTasks;
+        this.completionRate = completionRate;
     }
 
     public Long getTotalTasks() {
@@ -38,35 +42,61 @@ public class TaskCompletionStatsDTO implements Serializable {
         this.completedTasks = completedTasks;
     }
 
-    public Double getCompletionPercentage() {
-        return completionPercentage;
+    public Long getPendingTasks() {
+        return pendingTasks;
     }
 
-    public void setCompletionPercentage(Double completionPercentage) {
-        this.completionPercentage = completionPercentage;
+    public void setPendingTasks(Long pendingTasks) {
+        this.pendingTasks = pendingTasks;
+    }
+
+    public Long getOverdueTasks() {
+        return overdueTasks;
+    }
+
+    public void setOverdueTasks(Long overdueTasks) {
+        this.overdueTasks = overdueTasks;
+    }
+
+    public Double getCompletionRate() {
+        return completionRate;
+    }
+
+    public void setCompletionRate(Double completionRate) {
+        this.completionRate = completionRate;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof TaskCompletionStatsDTO)) {
+            return false;
+        }
         TaskCompletionStatsDTO that = (TaskCompletionStatsDTO) o;
-        return Objects.equals(totalTasks, that.totalTasks) &&
-               Objects.equals(completedTasks, that.completedTasks) &&
-               Objects.equals(completionPercentage, that.completionPercentage);
+        return (
+            Objects.equals(getTotalTasks(), that.getTotalTasks()) &&
+            Objects.equals(getCompletedTasks(), that.getCompletedTasks()) &&
+            Objects.equals(getPendingTasks(), that.getPendingTasks()) &&
+            Objects.equals(getOverdueTasks(), that.getOverdueTasks()) &&
+            Objects.equals(getCompletionRate(), that.getCompletionRate())
+        );
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(totalTasks, completedTasks, completionPercentage);
+        return Objects.hash(getTotalTasks(), completedTasks, pendingTasks, overdueTasks, getCompletionRate());
     }
 
     @Override
     public String toString() {
         return "TaskCompletionStatsDTO{" +
-               "totalTasks=" + totalTasks +
-               ", completedTasks=" + completedTasks +
-               ", completionPercentage=" + completionPercentage +
-               '}' + ";";
+            "totalTasks=" + totalTasks +
+            ", completedTasks=" + completedTasks +
+            ", pendingTasks=" + pendingTasks +
+            ", overdueTasks=" + overdueTasks +
+            ", completionRate=" + completionRate +
+            '}';
     }
 }
