@@ -8,9 +8,9 @@ import com.protaskflovxz.service.dto.TaskCompletionStatsDTO;
 import com.protaskflovxz.service.dto.TaskDTO;
 import com.protaskflovxz.service.dto.TaskStatusDistributionDTO;
 import com.protaskflovxz.service.mapper.TaskMapper;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -89,49 +89,40 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<TaskDTO> findAllTasksForCurrentUser() {
-        LOG.debug("Request to get all Tasks for current user");
-        return SecurityUtils
+    public List<TaskDTO> getAllTasksForCurrentUser() {
+        String userLogin = SecurityUtils
             .getCurrentUserLogin()
-            .map(login -> taskRepository.findAllByAssignedToLogin(login))
-            .map(tasks -> tasks.stream().map(taskMapper::toDto).collect(Collectors.toList()))
-            .orElse(List.of());
+            .orElseThrow(() -> new IllegalStateException("Current user login not found"));
+        LOG.debug("Request to get all Tasks for current user: {}", userLogin);
+        return taskMapper.toDto(taskRepository.findByAssignedToUserLogin(userLogin));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<TaskStatusDistributionDTO> getTaskStatusDistributionForCurrentUser() {
-        LOG.debug("Request to get Task status distribution for current user");
-        return SecurityUtils
+    public List<TaskStatusDistributionDTO> getTaskStatusDistributionForUser() {
+        String userLogin = SecurityUtils
             .getCurrentUserLogin()
-            .map(login ->
-                taskRepository
-                    .countTasksByStatusForUser(login)
-                    .stream()
-                    .map(
-                        result ->
-                            new TaskStatusDistributionDTO(
-                                Boolean.TRUE.equals(result[0]) ? "Completed" : "Pending", // Convert boolean to String
-                                (Long) result[1]
-                            )
-                    )
-                    .collect(Collectors.toList())
-            )
-            .orElse(List.of());
+            .orElseThrow(() -> new IllegalStateException("Current user login not found"));
+        LOG.debug("Request to get task status distribution for user: {}", userLogin);
+        // The repository now directly returns DTOs via JPQL constructor
+        return taskRepository.countTasksByStatusForUser(userLogin);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public TaskCompletionStatsDTO getTaskCompletionStatsForCurrentUser() {
-        LOG.debug("Request to get Task completion statistics for current user");
-        return SecurityUtils
+    public TaskCompletionStatsDTO getTaskCompletionStatsForUser() {
+        String userLogin = SecurityUtils
             .getCurrentUserLogin()
-            .map(login -> {
-                long totalTasks = taskRepository.countByAssignedToLogin(login);
-                long completedTasks = taskRepository.countByAssignedToLoginAndCompleted(login, true);
-                double completionPercentage = (totalTasks > 0) ? ((double) completedTasks / totalTasks) * 100 : 0.0;
-                return new TaskCompletionStatsDTO(totalTasks, completedTasks, completionPercentage);
-            })
-            .orElse(new TaskCompletionStatsDTO(0L, 0L, 0.0));
+            .orElseThrow(() -> new IllegalStateException("Current user login not found"));
+        LOG.debug("Request to get task completion statistics for user: {}", userLogin);
+
+        Long totalTasks = taskRepository.countAllTasksForUser(userLogin);
+        Long completedTasks = taskRepository.countCompletedTasksForUser(userLogin);
+        Long pendingTasks = taskRepository.countPendingTasksForUser(userLogin);
+        Long overdueTasks = taskRepository.countOverdueTasksForUser(userLogin, LocalDate.now());
+
+        double completionRate = (totalTasks > 0) ? ((double) completedTasks / totalTasks) * 100.0 : 0.0;
+
+        return new TaskCompletionStatsDTO(totalTasks, completedTasks, completionRate, pendingTasks, overdueTasks);
     }
 }
