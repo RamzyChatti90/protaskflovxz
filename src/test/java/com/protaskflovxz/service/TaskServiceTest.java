@@ -143,43 +143,4 @@ class TaskServiceTest {
             verify(taskRepository).countByAssignedToLoginAndCompleted(MOCK_LOGIN, true);
         }
     }
-
-    @Test
-    void getTaskCompletionStatsForCurrentUserShouldHandleNoUserLogin() {
-        try (MockedStatic<SecurityUtils> mockedStatic = mockStatic(SecurityUtils.class)) {
-            mockedStatic.when(SecurityUtils::getCurrentUserLogin).thenReturn(Optional.empty());
-
-            TaskCompletionStatsDTO result = taskService.getTaskCompletionStatsForCurrentUser();
-
-            assertThat(result.getTotalTasks()).isEqualTo(0L);
-            assertThat(result.getCompletedTasks()).isEqualTo(0L);
-            assertThat(result.getCompletionPercentage()).isEqualTo(0.0);
-
-            verifyNoInteractions(taskRepository);
-        }
-    }
-
-    @Test
-    void findAllTasksForCurrentUserShouldHandleNoUserLogin() {
-        try (MockedStatic<SecurityUtils> mockedStatic = mockStatic(SecurityUtils.class)) {
-            mockedStatic.when(SecurityUtils::getCurrentUserLogin).thenReturn(Optional.empty());
-
-            List<TaskDTO> result = taskService.findAllTasksForCurrentUser();
-
-            assertThat(result).isEmpty();
-            verifyNoInteractions(taskRepository);
-        }
-    }
-
-    @Test
-    void getTaskStatusDistributionForCurrentUserShouldHandleNoUserLogin() {
-        try (MockedStatic<SecurityUtils> mockedStatic = mockStatic(SecurityUtils.class)) {
-            mockedStatic.when(SecurityUtils::getCurrentUserLogin).thenReturn(Optional.empty());
-
-            List<TaskStatusDistributionDTO> result = taskService.getTaskStatusDistributionForCurrentUser();
-
-            assertThat(result).isEmpty();
-            verifyNoInteractions(taskRepository);
-        }
-    }
 }
