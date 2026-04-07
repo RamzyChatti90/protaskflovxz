@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * A DTO for the Task status distribution.
+ * A DTO for the {@link com.protaskflovxz.domain.Task} entity representing task distribution by status.
  */
 public class TaskStatusDistributionDTO implements Serializable {
 
@@ -12,7 +12,7 @@ public class TaskStatusDistributionDTO implements Serializable {
     private Long count;
 
     public TaskStatusDistributionDTO() {
-        // Empty constructor needed for Jackson deserialization
+        // Empty constructor needed for Jackson/Spring
     }
 
     public TaskStatusDistributionDTO(String status, Long count) {
@@ -56,8 +56,8 @@ public class TaskStatusDistributionDTO implements Serializable {
     @Override
     public String toString() {
         return "TaskStatusDistributionDTO{" +
-               "status='" + status + '\'' +
-               ", count=" + count +
-               '}';
+            "status='" + status + '\'' +
+            ", count=" + count +
+            '}';
     }
 }
