@@ -4,12 +4,13 @@ import com.protaskflovxz.domain.Task;
 import com.protaskflovxz.repository.TaskRepository;
 import com.protaskflovxz.security.SecurityUtils;
 import com.protaskflovxz.service.TaskService;
-import com.protaskflovxz.service.dto.TaskDTO;
 import com.protaskflovxz.service.dto.TaskCompletionStatsDTO;
+import com.protaskflovxz.service.dto.TaskDTO;
 import com.protaskflovxz.service.dto.TaskStatusDistributionDTO;
 import com.protaskflovxz.service.mapper.TaskMapper;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -75,36 +76,6 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<TaskDTO> findAllByCurrentUser(Pageable pageable) {
-        LOG.debug("Request to get all Tasks for current user");
-        String currentUserLogin = SecurityUtils
-            .getCurrentUserLogin()
-            .orElseThrow(() -> new IllegalStateException("Current user login not found"));
-        return taskRepository.findAllByCreatedBy(currentUserLogin, pageable).map(taskMapper::toDto);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<TaskStatusDistributionDTO> getTaskStatusDistributionForCurrentUser() {
-        LOG.debug("Request to get task status distribution for current user");
-        String currentUserLogin = SecurityUtils
-            .getCurrentUserLogin()
-            .orElseThrow(() -> new IllegalStateException("Current user login not found"));
-        return taskRepository.findTaskStatusDistributionByCreatedBy(currentUserLogin);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public TaskCompletionStatsDTO getTaskCompletionStatsForCurrentUser() {
-        LOG.debug("Request to get task completion statistics for current user");
-        String currentUserLogin = SecurityUtils
-            .getCurrentUserLogin()
-            .orElseThrow(() -> new IllegalStateException("Current user login not found"));
-        return taskRepository.findTaskCompletionStatsByCreatedBy(currentUserLogin);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public Optional<TaskDTO> findOne(Long id) {
         LOG.debug("Request to get Task : {}", id);
         return taskRepository.findById(id).map(taskMapper::toDto);
@@ -114,5 +85,39 @@ public class TaskServiceImpl implements TaskService {
     public void delete(Long id) {
         LOG.debug("Request to delete Task : {}", id);
         taskRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<TaskDTO> findAllTasksForCurrentUser() {
+        LOG.debug("Request to get all Tasks for current user");
+        String currentUserLogin = SecurityUtils
+            .getCurrentUserLogin()
+            .orElseThrow(() -> new IllegalStateException("Current user login not found"));
+        return taskRepository.findAllByAssignedToUserLogin(currentUserLogin).stream().map(taskMapper::toDto).collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<TaskStatusDistributionDTO> getTaskStatusDistributionForCurrentUser() {
+        LOG.debug("Request to get task status distribution for current user");
+        String currentUserLogin = SecurityUtils
+            .getCurrentUserLogin()
+            .orElseThrow(() -> new IllegalStateException("Current user login not found"));
+        return taskRepository.countTasksByStatusForUser(currentUserLogin);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public TaskCompletionStatsDTO getTaskCompletionStatsForCurrentUser() {
+        LOG.debug("Request to get task completion statistics for current user");
+        String currentUserLogin = SecurityUtils
+            .getCurrentUserLogin()
+            .orElseThrow(() -> new IllegalStateException("Current user login not found"));
+
+        Long totalTasks = taskRepository.countAllByAssignedToUserLogin(currentUserLogin);
+        Long completedTasks = taskRepository.countByAssignedToUserLoginAndCompletedIsTrue(currentUserLogin);
+
+        return new TaskCompletionStatsDTO(totalTasks, completedTasks);
     }
 }
