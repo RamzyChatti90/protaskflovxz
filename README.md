@@ -1,6 +1,5 @@
-# protaskflovxz
-
 [![CI Pipeline Status](https://github.com/protaskflovxz/proTaskFlovxz/actions/workflows/main.yml/badge.svg)](https://github.com/protaskflovxz/proTaskFlovxz/actions/workflows/main.yml)
+# protaskflovxz
 
 This application was generated using JHipster 8.11.0, you can find documentation and help at [https://www.jhipster.tech/documentation-archive/v8.11.0](https://www.jhipster.tech/documentation-archive/v8.11.0).
 
