@@ -28,6 +28,8 @@ public class TaskDTO implements Serializable {
 
     private ProjectDTO project;
 
+    private UserDTO assignedTo;
+
     public Long getId() {
         return id;
     }
@@ -84,6 +86,14 @@ public class TaskDTO implements Serializable {
         this.project = project;
     }
 
+    public UserDTO getAssignedTo() {
+        return assignedTo;
+    }
+
+    public void setAssignedTo(UserDTO assignedTo) {
+        this.assignedTo = assignedTo;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -116,6 +126,7 @@ public class TaskDTO implements Serializable {
             ", completed='" + getCompleted() + "'" +
             ", priority=" + getPriority() +
             ", project=" + getProject() +
+            ", assignedTo=" + getAssignedTo() +
             "}";
     }
 }
