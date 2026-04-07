@@ -10,54 +10,37 @@ application {
     prodDatabaseType postgresql
     packageName com.protaskflovxz
     serverPort 9000
-    enableTranslation Boolean
-    languages [fr, en]
-    nativeLanguage fr
   }
   entities *
 }
 
-enum Priority {
-  LOW
-  MEDIUM
-  HIGH
-  URGENT
-}
-
-enum Status {
-  TODO
-  IN_PROGRESS
-  DONE
-  BLOCKED
+entity Project {
+  name String required
+  description TextBlob
+  startDate LocalDate
+  endDate LocalDate
+  completed Boolean
 }
 
 entity Task {
   title String required
-  description String
-  priority Priority
-  status Status
+  description TextBlob
   dueDate LocalDate
-  createdAt Instant
-}
-
-entity Category {
-  name String required
-  color String
-  icon String
+  completed Boolean
+  priority Integer
 }
 
 entity Comment {
-  content String required
-  createdAt Instant
+  content TextBlob required
+  postedDate Instant
 }
 
 relationship ManyToOne {
-  Task{assignee} to User with builtInEntity
-  Task{category} to Category
+  Task{project} to Project
   Comment{task} to Task
-  Comment{author} to User with builtInEntity
 }
 
 dto * with mapstruct
 service * with serviceImpl
-paginate * with pagination
+paginate Project with pagination
+paginate Task with pagination

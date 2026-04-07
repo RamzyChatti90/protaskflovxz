@@ -1,0 +1,20 @@
+{
+  "generator-jhipster": {
+    "applicationType": "monolith",
+    "authenticationType": "jwt",
+    "baseName": "protaskflovxz",
+    "buildTool": "maven",
+    "clientFramework": "angular",
+    "databaseType": "sql",
+    "devDatabaseType": "h2Disk",
+    "entities": ["Project", "Task", "Comment"],
+    "jhipsterVersion": "8.11.0",
+    "jwtSecretKey": "MGUyYjliODY4YWM3Mzk1YzVkNDQ5ZGQ0YjM1NWU5MTQyOWE5ZDA3YTdjYmNjNzU2NThhZjBhZjRmY2JjODZkNzI5NThlM2Y5YWU2OTBiMDk1OGM4MjY0NGE0Y2U3MTNlOTcyYWM4OWVmMzQzY2I0MDM3YmZmZGNmZTBjYmNlOTc=",
+    "languages": ["en"],
+    "lastLiquibaseTimestamp": 1775572885000,
+    "nativeLanguage": "en",
+    "packageName": "com.protaskflovxz",
+    "prodDatabaseType": "postgresql",
+    "serverPort": "9000"
+  }
+}
