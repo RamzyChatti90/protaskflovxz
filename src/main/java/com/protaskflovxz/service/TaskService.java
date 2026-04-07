@@ -1,13 +1,11 @@
 package com.protaskflovxz.service;
 
 import com.protaskflovxz.service.dto.TaskDTO;
-import com.protaskflovxz.service.dto.TaskStatusDistributionDTO;
 import com.protaskflovxz.service.dto.TaskCompletionStatsDTO;
-import java.util.List;
+import com.protaskflovxz.service.dto.TaskStatusDistributionDTO;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.prepost.PreAuthorize;
 
 /**
  * Service Interface for managing {@link com.protaskflovxz.domain.Task}.
@@ -43,7 +41,6 @@ public interface TaskService {
      * @param pageable the pagination information.
      * @return the list of entities.
      */
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     Page<TaskDTO> findAll(Pageable pageable);
 
     /**
@@ -62,24 +59,24 @@ public interface TaskService {
     void delete(Long id);
 
     /**
-     * Get all the tasks assigned to the current user.
+     * Get all tasks assigned to the current user.
      *
      * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Page<TaskDTO> findAllForCurrentUser(Pageable pageable);
+    Page<TaskDTO> findTasksForCurrentUser(Pageable pageable);
 
     /**
-     * Get the distribution of tasks by status for the current user.
+     * Get task status distribution for the current user.
      *
-     * @return the list of task status distribution DTOs.
+     * @return the DTO containing task status distribution.
      */
-    List<TaskStatusDistributionDTO> getTaskStatusDistributionForCurrentUser();
+    TaskStatusDistributionDTO getTaskStatusDistributionForCurrentUser();
 
     /**
-     * Get the completion statistics for tasks assigned to the current user.
+     * Get task completion statistics for the current user.
      *
-     * @return the task completion statistics DTO.
+     * @return the DTO containing task completion statistics.
      */
     TaskCompletionStatsDTO getTaskCompletionStatsForCurrentUser();
 }
