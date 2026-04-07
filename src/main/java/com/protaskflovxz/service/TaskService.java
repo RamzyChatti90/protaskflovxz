@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 /**
  * Service Interface for managing {@link com.protaskflovxz.domain.Task}.
@@ -42,6 +43,7 @@ public interface TaskService {
      * @param pageable the pagination information.
      * @return the list of entities.
      */
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     Page<TaskDTO> findAll(Pageable pageable);
 
     /**
