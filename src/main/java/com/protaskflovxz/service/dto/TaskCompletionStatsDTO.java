@@ -10,20 +10,18 @@ public class TaskCompletionStatsDTO implements Serializable {
 
     private Long totalTasks;
     private Long completedTasks;
-    private Double completionPercentage;
+    private Long pendingTasks;
+    private Double completionRate;
 
     public TaskCompletionStatsDTO() {
         // Empty constructor needed for Jackson/Spring
     }
 
-    public TaskCompletionStatsDTO(Long totalTasks, Long completedTasks) {
+    public TaskCompletionStatsDTO(Long totalTasks, Long completedTasks, Long pendingTasks, Double completionRate) {
         this.totalTasks = totalTasks;
         this.completedTasks = completedTasks;
-        if (totalTasks != null && totalTasks > 0) {
-            this.completionPercentage = (double) completedTasks / totalTasks * 100.0;
-        } else {
-            this.completionPercentage = 0.0;
-        }
+        this.pendingTasks = pendingTasks;
+        this.completionRate = completionRate;
     }
 
     public Long getTotalTasks() {
@@ -42,31 +40,36 @@ public class TaskCompletionStatsDTO implements Serializable {
         this.completedTasks = completedTasks;
     }
 
-    public Double getCompletionPercentage() {
-        return completionPercentage;
+    public Long getPendingTasks() {
+        return pendingTasks;
     }
 
-    public void setCompletionPercentage(Double completionPercentage) {
-        this.completionPercentage = completionPercentage;
+    public void setPendingTasks(Long pendingTasks) {
+        this.pendingTasks = pendingTasks;
+    }
+
+    public Double getCompletionRate() {
+        return completionRate;
+    }
+
+    public void setCompletionRate(Double completionRate) {
+        this.completionRate = completionRate;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof TaskCompletionStatsDTO)) {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         TaskCompletionStatsDTO that = (TaskCompletionStatsDTO) o;
-        return (Objects.equals(totalTasks, that.totalTasks) &&
-                Objects.equals(completedTasks, that.completedTasks) &&
-                Objects.equals(completionPercentage, that.completionPercentage));
+        return Objects.equals(totalTasks, that.totalTasks) &&
+               Objects.equals(completedTasks, that.completedTasks) &&
+               Objects.equals(pendingTasks, that.pendingTasks) &&
+               Objects.equals(completionRate, that.completionRate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(totalTasks, completedTasks, completionPercentage);
+        return Objects.hash(totalTasks, completedTasks, pendingTasks, completionRate);
     }
 
     @Override
@@ -74,7 +77,8 @@ public class TaskCompletionStatsDTO implements Serializable {
         return "TaskCompletionStatsDTO{" +
                "totalTasks=" + totalTasks +
                ", completedTasks=" + completedTasks +
-               ", completionPercentage=" + completionPercentage +
+               ", pendingTasks=" + pendingTasks +
+               ", completionRate=" + completionRate +
                '}';
     }
 }
