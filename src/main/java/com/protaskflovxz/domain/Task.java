@@ -45,8 +45,8 @@ public class Task implements Serializable {
     private Project project;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "assigned_to_id")
-    private User assignedTo;
+    @JoinColumn(name = "user_id")
+    private User user;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -141,17 +141,17 @@ public class Task implements Serializable {
         return this;
     }
 
-    public User getAssignedTo() {
-        return this.assignedTo;
+    public User getUser() {
+        return this.user;
     }
 
-    public void setAssignedTo(User user) {
-        this.assignedTo = user;
-    }
-
-    public Task assignedTo(User user) {
-        this.setAssignedTo(user);
+    public Task user(User user) {
+        this.setUser(user);
         return this;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
