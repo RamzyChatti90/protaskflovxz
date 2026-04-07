@@ -44,6 +44,10 @@ public class Task implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     private Project project;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "assigned_to_id")
+    private User assignedTo;
+
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
     public Long getId() {
@@ -134,6 +138,19 @@ public class Task implements Serializable {
 
     public Task project(Project project) {
         this.setProject(project);
+        return this;
+    }
+
+    public User getAssignedTo() {
+        return this.assignedTo;
+    }
+
+    public void setAssignedTo(User user) {
+        this.assignedTo = user;
+    }
+
+    public Task assignedTo(User user) {
+        this.setAssignedTo(user);
         return this;
     }
 
